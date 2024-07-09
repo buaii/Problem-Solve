@@ -3,15 +3,22 @@ input = sys.stdin.readline
 
 n = int(input().strip())
 m = int(input().strip())
-p = "IOI"
-pn = p + "OI"*(n-1)
 
-data = list(input().strip())
+data = input().strip()
+
+cursor = 0
+result = 0
 count = 0
-for i in range(len(data)-2):
-	check = data[i:i+2+2*(n-1)+1]
-	test = ''.join([char for char in check])
-	
-	if  test == pn:
+while cursor < m-1:
+#	print(count, cursor, result)
+#	print(data[cursor:cursor+3])
+	if data[cursor:cursor+3] == "IOI":
 		count += 1
-sys.stdout.write(f"{count}")
+		cursor += 2
+		if count == n:
+			count -= 1
+			result += 1
+	else:
+		cursor += 1
+		count = 0
+sys.stdout.write(f"{result}")
