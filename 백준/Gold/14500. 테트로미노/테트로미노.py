@@ -1,38 +1,48 @@
 import sys
+from collections import deque
 input = sys.stdin.readline
 
-def is_within_bounds(x, y):
-    return 0 <= x < n and 0 <= y < m
+def checkBoard(x, y):
+	if 0 <= x < n and 0 <= y < m:
+		return True
+	else:
+		return False
 
 n, m = map(int, input().strip().split())
 graph = [list(map(int, input().strip().split())) for _ in range(n)]
-
-shapes = [
-    [(0, 0), (1, 0), (2, 0), (3, 0)], [(0, 0), (0, 1), (0, 2), (0, 3)],  # ㅡ, |
-    [(0, 0), (1, 0), (0, 1), (1, 1)],  # ㅁ
-    [(0, 0), (0, 1), (1, 1), (2, 1)], [(0, 0), (1, 0), (2, 0), (2, 1)],  # ㄴ 모양들
-    [(0, 0), (0, 1), (0, 2), (-1, 2)], [(0, 0), (1, 0), (0, 1), (0, 2)],
-    [(0, 0), (1, 0), (2, 0), (2, -1)], [(0, 0), (0, 1), (0, 2), (1, 2)],
-    [(0, 0), (0, 1), (1, 0), (2, 0)], [(0, 0), (1, 0), (1, 1), (1, 2)],
-    [(0, 0), (1, 0), (1, 1), (2, 1)], [(0, 0), (0, 1), (-1, 1), (-1, 2)],  # ㄴㄱ 모양들
-    [(0, 0), (1, 0), (1, -1), (2, -1)], [(0, 0), (0, 1), (1, 1), (1, 2)],
-    [(0, 0), (0, 1), (1, 1), (0, 2)], [(0, 0), (1, 0), (1, 1), (2, 0)],  # ㅜ, ㅗ 모양들
-    [(0, 0), (0, 1), (-1, 1), (0, 2)], [(0, 0), (1, 0), (1, -1), (2, 0)]
-]
-
-max_sum = 0
+visited = [[False] * m for _ in range(n)]
+result = 0
+check = [
+# l # ㅡ
+	[(0,0), (1,0), (2,0), (3,0)], [(0,0), (0,1), (0,2), (0,3)],
+# ㅁ
+	[(0,0), (1,0), (0,1), (1,1)],
+# ㄱ # ㄴ # ㄴ90 # ㄱ90
+	[(0,0), (0,1), (1,1), (2,1)], [(0,0), (1,0), (2,0), (2,1)], [(0,0), (0,1), (0,2), (-1,2)],
+	[(0,0), (1,0), (0,1), (0,2)],
+	[(0,0), (1,0), (2,0), (2,-1)], [(0,0), (0,1), (0,2), (1,2)], [(0,0), (0,1), (1,0), (2,0)],
+	[(0,0), (1,0), (1,1), (1,2)],
+# ㄴㄱ # ㄴㄱ90 
+	[(0,0), (1,0), (1,1), (2,1)], [(0,0), (0,1), (-1,1), (-1,2)],
+	[(0,0), (1,0), (1,-1), (2,-1)], [(0,0), (0,1), (1,1), (1,2)],
+# ㅜ # ㅏ # ㅗ # ㅓ
+	[(0,0), (0,1), (1,1), (0,2)], [(0,0), (1,0), (1,1), (2,0)], 
+	[(0,0), (0,1), (-1,1), (0,2)], [(0,0), (1,0), (1,-1), (2,0)]
+	]
+answer = 0
 for x in range(n):
-    for y in range(m):
-        for shape in shapes:
-            current_sum = 0
-            is_valid = True
-            for dx, dy in shape:
-                nx, ny = x + dx, y + dy
-                if not is_within_bounds(nx, ny):
-                    is_valid = False
-                    break
-                current_sum += graph[nx][ny]
-            if is_valid:
-                max_sum = max(max_sum, current_sum)
+	for y in range(m):
+		for c in check:
+			point = True
+			sum = 0
+			for cx, cy in c:
+				dx, dy = x + cx, y + cy
+				if not checkBoard(dx, dy):
+					point = False
+					break
+				else:
+					sum += graph[dx][dy]
+			if point:
+				answer = max(answer, sum)
 
-print(max_sum)
+sys.stdout.write(f"{answer}")
